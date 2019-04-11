@@ -34,6 +34,7 @@ gradle clean runClient -Pmyargs=<num_of_users>,<concurrent_threads_per_user>,<ro
 ```
 
 For simplicity, we are choosing randomly one of the below 3 Round of wallet transaction 
+
 •	Round A
   •	Deposit 100 USD
   •	Withdraw 200 USD
