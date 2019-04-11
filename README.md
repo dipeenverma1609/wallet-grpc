@@ -34,24 +34,24 @@ gradle clean runClient -Pmyargs=<num_of_users>,<concurrent_threads_per_user>,<ro
 ```
 
 For simplicity, we are choosing randomly one of the below 3 Round of wallet transaction 
-
+```
 •	Round A
 
-  •	Deposit 100 USD
+ Deposit 100 USD
   
-  •	Withdraw 200 USD
+ Withdraw 200 USD
   
-  •	Deposit 100 EUR
+ Deposit 100 EUR
+  
+Get Balance
+  
+  •	Withdraw 100 USD
   
   •	Get Balance
   
   •	Withdraw 100 USD
-  
-  •	Get Balance
-  
-  •	Withdraw 100 USD
- 
-
+```
+```
 •	Round B
 
   •	Withdraw 100 GBP
@@ -63,8 +63,8 @@ For simplicity, we are choosing randomly one of the below 3 Round of wallet tran
   •	Withdraw 100 GBP
   
   •	Withdraw 100 GBP
-  
-
+```
+```
 •	Round C
 
   •	Get Balance
@@ -82,7 +82,8 @@ For simplicity, we are choosing randomly one of the below 3 Round of wallet tran
   •	Withdraw 200 USD
   
   •	Get Balance
-  
+```
+
 
 In client, before making wallet transaction calls, we create 3 wallets for a single user with 3 currencies, namely USD, GBP, & EUR, each as a single user can have multiple currency wallets.
 Since each credit/debit transaction has a currency with it, the server side transaction will happen only with the wallet of that currency only.
