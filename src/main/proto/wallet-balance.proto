@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_package = "com.betpawa.hiring";
+
+
+message WalletBalanceRequest {
+  string user = 1;
+}
+
+message WalletBalanceResponse {
+  string result = 1;
+}
+
+
+service WalletBalanceService {
+  rpc transact(WalletBalanceRequest) returns (WalletBalanceResponse) {}
+}

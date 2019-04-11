@@ -1,0 +1,82 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
+    }
+}
+
+ext {
+    SLF4J_VERSION = '1.7.10'
+    JUNIT_VERSION = '4.11'
+}
+
+allprojects {
+    group 'com.betpawa.hiring'
+    version '1.0'
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'com.google.protobuf'
+//apply plugin: 'application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile group: 'io.grpc', name: 'grpc-netty', version: '1.19.0'
+    compile group: 'io.grpc', name: 'grpc-protobuf', version: '1.19.0'
+    compile group: 'io.grpc', name: 'grpc-stub', version: '1.19.0'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.15'
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '4.3.6.Final'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+    compile "org.slf4j:slf4j-api:${SLF4J_VERSION}"
+    compile "org.slf4j:slf4j-log4j12:${SLF4J_VERSION}"
+
+    testCompile "junit:junit:${JUNIT_VERSION}"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs './build/generated/source/proto/main/grpc'
+            srcDirs './build/generated/source/proto/main/java'
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.7.0'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.19.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
+task runClient(type: JavaExec, dependsOn: build) {
+    classpath sourceSets.main.runtimeClasspath
+    if(project.hasProperty('myargs')){
+        args(myargs.split(','))
+    }
+    main = "com.betpawa.hiring.client.WalletClientMain"
+}
+
+task runServer(type: JavaExec, dependsOn: build) {
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.betpawa.hiring.server.WalletServerMain"
+}

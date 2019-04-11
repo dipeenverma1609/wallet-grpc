@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "com.betpawa.hiring";
+
+
+message CreditTxnRequest {
+  string user = 1;
+  double amount = 2;
+  string currency = 3;
+}
+
+message CreditTxnResponse {
+  string result = 1;
+}
+
+
+service CreditTxnService {
+  rpc transact(CreditTxnRequest) returns (CreditTxnResponse) {}
+}
