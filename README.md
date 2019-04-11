@@ -69,6 +69,8 @@ Get Balance
 In client, before making wallet transaction calls, we create 3 wallets for a single user with 3 currencies, namely USD, GBP, & EUR, each as a single user can have multiple currency wallets.
 Since each credit/debit transaction has a currency with it, the server side transaction will happen only with the wallet of that currency only.
 
+In case we are maintaining only 1 wallet consuming multiple currencies, then we will have to just convert the foreign currency to wallet's base currency and create a transaction. But it was not mentioned in doc.
+
 While testing locally we found that wallet can handle 35 sync calls per user per thread per second.
 We tested this scenario of 1 user and 1 thread for 100 rounds of call.
 
