@@ -45,37 +45,24 @@ Withdraw 100 USD
 Get Balance  
 Withdraw 100 USD
 ```
-```
 •	Round B
-
-  •	Withdraw 100 GBP
-  
-  •	Deposit 300 GPB
-  
-  •	Withdraw 100 GBP
-  
-  •	Withdraw 100 GBP
-  
-  •	Withdraw 100 GBP
 ```
+Withdraw 100 GBP  
+Deposit 300 GPB
+Withdraw 100 GBP  
+Withdraw 100 GBP  
+Withdraw 100 GBP
 ```
 •	Round C
-
-  •	Get Balance
-  
-  •	Deposit 100 USD
-  
-  •	Deposit 100 USD
-  
-  •	Withdraw 100 USD
-  
-  •	Depsoit 100 USD
-  
-  •	Get Balance
-  
-  •	Withdraw 200 USD
-  
-  •	Get Balance
+```
+Get Balance
+Deposit 100 USD  
+Deposit 100 USD  
+Withdraw 100 USD  
+Depsoit 100 USD  
+Get Balance  
+Withdraw 200 USD  
+Get Balance
 ```
 
 
