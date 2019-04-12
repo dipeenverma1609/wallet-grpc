@@ -16,7 +16,15 @@ public class WalletBalanceGrpcImpl extends WalletBalanceServiceGrpc.WalletBalanc
 
     private static final Logger logger = LoggerFactory.getLogger(WalletBalanceGrpcImpl.class);
 
-    private final WalletService walletService = new WalletServiceImpl();
+    private WalletService walletService;
+
+    public WalletBalanceGrpcImpl() {
+        this.walletService = new WalletServiceImpl();
+    }
+
+    public WalletBalanceGrpcImpl(WalletService walletService) {
+        this.walletService = walletService;
+    }
 
     @Override
     public void transact(final WalletBalance.WalletBalanceRequest request,

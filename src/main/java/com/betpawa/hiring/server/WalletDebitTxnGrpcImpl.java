@@ -20,7 +20,15 @@ public class WalletDebitTxnGrpcImpl extends DebitTxnServiceGrpc.DebitTxnServiceI
 
     private static final Logger logger = LoggerFactory.getLogger(WalletDebitTxnGrpcImpl.class);
 
-    private final WalletService walletService = new WalletServiceImpl();
+    private WalletService walletService;
+
+    public WalletDebitTxnGrpcImpl() {
+        this.walletService = new WalletServiceImpl();
+    }
+
+    public WalletDebitTxnGrpcImpl(WalletService walletService) {
+        this.walletService = walletService;
+    }
 
     @Override
     public void transact(final WalletDebitTxn.DebitTxnRequest request,

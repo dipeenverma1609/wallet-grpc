@@ -20,7 +20,15 @@ public class WalletCreditTxnGrpcImpl extends CreditTxnServiceGrpc.CreditTxnServi
 
     private static final Logger logger = LoggerFactory.getLogger(WalletCreditTxnGrpcImpl.class);
 
-    private final WalletService walletService = new WalletServiceImpl();
+    private WalletService walletService;
+
+    public WalletCreditTxnGrpcImpl() {
+        this.walletService = new WalletServiceImpl();
+    }
+
+    public WalletCreditTxnGrpcImpl(WalletService walletService) {
+        this.walletService = walletService;
+    }
 
     @Override
     public void transact(final WalletCreditTxn.CreditTxnRequest request,
@@ -39,6 +47,9 @@ public class WalletCreditTxnGrpcImpl extends CreditTxnServiceGrpc.CreditTxnServi
                 responseString = "wallet not found";
             }
 
+        } catch (InvalidTransactionException e) {
+            logger.error("Invalid txn error :: [{}]", request, e);
+            responseString = e.getMessage();
         } catch (InvalidRequestException e) {
             logger.error("Invalid request error :: [{}]", request, e);
             responseString = e.getMessage();

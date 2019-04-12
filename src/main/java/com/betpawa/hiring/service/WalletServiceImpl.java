@@ -4,23 +4,30 @@ import com.betpawa.hiring.bean.TransactionType;
 import com.betpawa.hiring.bean.UserWalletInfo;
 import com.betpawa.hiring.bean.WalletTransactionInfo;
 import com.betpawa.hiring.dao.WalletTxnDataService;
+import com.betpawa.hiring.dao.WalletTxnDataServiceImpl;
 import com.betpawa.hiring.dao.WalletUserInfoService;
+import com.betpawa.hiring.dao.WalletUserInfoServiceImpl;
 import com.betpawa.hiring.exceptions.InvalidTransactionException;
 
+import com.betpawa.hiring.exceptions.TransactionFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WalletServiceImpl implements WalletService {
 
     private Logger logger = LoggerFactory.getLogger(WalletServiceImpl.class);
 
-    private WalletTxnDataService txnDataService = WalletTxnDataService.getInstance();
-    private WalletUserInfoService walletUserInfoService = WalletUserInfoService.getInstance();
+    private WalletTxnDataService txnDataService;
+    private WalletUserInfoService walletUserInfoService;
 
-    public WalletServiceImpl() {}
+    public WalletServiceImpl() {
+        this.txnDataService = WalletTxnDataServiceImpl.getInstance();
+        this.walletUserInfoService = WalletUserInfoServiceImpl.getInstance();
+    }
 
     public WalletServiceImpl(WalletTxnDataService txnDataService, WalletUserInfoService walletUserInfoService) {
         this.txnDataService = txnDataService;
@@ -51,12 +58,30 @@ public class WalletServiceImpl implements WalletService {
 
         final WalletTransactionInfo creditTxn = new WalletTransactionInfo.Builder().amount(amount).time(new Date())
                                                 .txnType(TransactionType.CREDIT).userId(user).build();
+
+        AtomicBoolean isTxnSuccess = new AtomicBoolean(false);
         try {
             txnDataService.addTransaction(creditTxn);
+            isTxnSuccess.set(true);
             user.setBalance(user.getBalance() + amount);
             walletUserInfoService.updateBalance(user);
 
+        } catch (TransactionFailedException e) {
+            String msg= String.format("Deposit %s %s failed", amount, user.getCurrency());
+            logger.error(msg, e);
+            throw new InvalidTransactionException(msg, e);
+
         } catch (Throwable e) {
+            try {
+                if(isTxnSuccess.get()) {
+                    final WalletTransactionInfo creditReverseTxn = new WalletTransactionInfo.Builder().amount(amount).time(new Date())
+                            .txnType(TransactionType.DEBIT).userId(user).build();
+                    txnDataService.addTransaction(creditReverseTxn);
+                }
+            } catch (TransactionFailedException e1) {
+                logger.error("Error in reversing credit txn for wallet :: ", user, e1);
+            }
+
             logger.error("Error in credit txn for wallet :: ", user, e);
             throw e;
         }
@@ -74,12 +99,31 @@ public class WalletServiceImpl implements WalletService {
 
         final WalletTransactionInfo debitTxn = new WalletTransactionInfo.Builder().amount(amount).time(new Date())
                                                 .txnType(TransactionType.DEBIT).userId(user).build();
+
+        AtomicBoolean isTxnSuccess = new AtomicBoolean(false);
         try {
             txnDataService.addTransaction(debitTxn);
+            isTxnSuccess.set(true);
             user.setBalance(oldBalance - amount);
             walletUserInfoService.updateBalance(user);
 
+        } catch (TransactionFailedException e) {
+            String msg= String.format("Withdraw %s %s failed", amount, user.getCurrency());
+            logger.error(msg, e);
+            throw new InvalidTransactionException(msg, e);
+
         } catch (Throwable e) {
+            try {
+                if (isTxnSuccess.get()) {
+                    final WalletTransactionInfo debitReverseTxn = new WalletTransactionInfo.Builder().amount(amount).time(new Date())
+                            .txnType(TransactionType.CREDIT).userId(user).build();
+                    txnDataService.addTransaction(debitReverseTxn);
+                }
+
+            } catch (TransactionFailedException e1) {
+                logger.error("Error in reversing debit txn for wallet :: ", user, e1);
+            }
+
             logger.error("Error in debit txn for wallet :: ", user, e);
             throw e;
         }

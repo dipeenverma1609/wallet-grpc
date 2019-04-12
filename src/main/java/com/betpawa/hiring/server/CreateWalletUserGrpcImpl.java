@@ -5,6 +5,7 @@ import com.betpawa.hiring.WalletUser;
 import com.betpawa.hiring.bean.Currency;
 import com.betpawa.hiring.bean.UserWalletInfo;
 import com.betpawa.hiring.dao.WalletUserInfoService;
+import com.betpawa.hiring.dao.WalletUserInfoServiceImpl;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,15 @@ import java.util.Date;
 public class CreateWalletUserGrpcImpl extends CreateWalletUserServiceGrpc.CreateWalletUserServiceImplBase {
 
     private final Logger logger = LoggerFactory.getLogger(CreateWalletUserGrpcImpl.class);
-    private WalletUserInfoService userInfoService = WalletUserInfoService.getInstance();
+    private WalletUserInfoService userInfoService ;
+
+    public CreateWalletUserGrpcImpl() {
+        this.userInfoService = WalletUserInfoServiceImpl.getInstance();
+    }
+
+    public CreateWalletUserGrpcImpl(WalletUserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
+    }
 
     @Override
     public void create(WalletUser.CreateWalletUserRequest request, StreamObserver<WalletUser.CreateWalletUserResponse> responseObserver) {
